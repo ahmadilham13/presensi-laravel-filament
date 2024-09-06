@@ -7,9 +7,12 @@ use App\Filament\Resources\OfficeResource\RelationManagers;
 use App\Models\Office;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Humaidem\FilamentMapPicker\Fields\OSMMap;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -26,6 +29,28 @@ class OfficeResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                OSMMap::make('location')
+                    ->label('Location')
+                    ->afterStateHydrated(function (Get $get, Set $set, $record) {
+                        $latitude = $record->latitude;
+                        $longitude = $record->longitude;
+
+                        if ($latitude && $longitude) {
+                            $set('location', ['lat' => $latitude, 'lng' => $longitude]);
+                        }
+                    })
+                    ->afterStateUpdated(function ($state, Get $get, Set $set) {
+                        $set('latitude', $state['lat']);
+                        $set('longitude', $state['lng']);
+                    })
+                    ->showMarker()
+                    ->draggable()
+                    ->extraControl([
+                        'zoomDelta' => 1,
+                        'zoomSnap'  => 0.25,
+                        'wheelPxPerZoomLevel' => 60
+                    ])
+                    ->tilesUrl('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
                 Forms\Components\TextInput::make('latitude')
                     ->required()
                     ->numeric(),
