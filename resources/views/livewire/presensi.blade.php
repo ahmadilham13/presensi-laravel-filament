@@ -12,21 +12,23 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
                         <div class="bg-gray-100 p-4 rounded-lg">
                             <h4 class="text-l font-bold mb-2">Jam Masuk</h4>
-                            <p><strong>09.02</strong></p>
+                            <p><strong>{{ $attendance->start_time }}</strong></p>
                         </div>
                         <div class="bg-gray-100 p-4 rounded-lg">
                             <h4 class="text-l font-bold mb-2">Jam Pulang</h4>
-                            <p><strong>17.00</strong></p>
+                            <p><strong>{{ $attendance->end_time }}</strong></p>
                         </div>
                     </div>
                 </div>
                 <div>
                     <h2 class="text-2xl font-bold mb-2">Presensi</h2>
                     <div id="map" class="mb-4 rounded-lg border border-gray-300" wire:ignore></div>
-                    <button type="button" onclick="tagLocation()" class="px-4 py-2 bg-blue-500 text-white rounded">Tag Location</button>
-                    @if ($insideRadius)
-                        <button type="button" class="px-4 py-2 bg-green-500 text-white rounded">Submit Presensi</button>
-                    @endif
+                    <form class="row g-3" wire:submit="store" enctype="multipart/form-data">
+                        <button type="button" onclick="tagLocation()" class="px-4 py-2 bg-blue-500 text-white rounded">Tag Location</button>
+                        @if ($insideRadius)
+                            <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded">Submit Presensi</button>
+                        @endif
+                    </form>
                 </div>
             </div>
         </div>
@@ -69,6 +71,8 @@
 
                     if (isWithinRadius(lat, lng, office, radius)) {
                         component.set('insideRadius', true);
+                        component.set('latitude', lat);
+                        component.set('longitude', lng);
                     } else {
                         alert('You are not within the office radius!');
                     }
