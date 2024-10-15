@@ -16,11 +16,11 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
                         <div class="bg-gray-100 p-4 rounded-lg">
-                            <h4 class="text-l font-bold mb-2">Jam Masuk</h4>
+                            <h4 class="text-l font-bold mb-2">Waktu Datang</h4>
                             <p><strong>{{ $attendance?->start_time ?? '-' }}</strong></p>
                         </div>
                         <div class="bg-gray-100 p-4 rounded-lg">
-                            <h4 class="text-l font-bold mb-2">Jam Pulang</h4>
+                            <h4 class="text-l font-bold mb-2">Waktu Pulang</h4>
                             <p><strong>{{ $attendance?->end_time ?? '-' }}</strong></p>
                         </div>
                     </div>
