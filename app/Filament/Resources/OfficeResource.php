@@ -38,8 +38,8 @@ class OfficeResource extends Resource
                                 OSMMap::make('location')
                                     ->label('Location')
                                     ->afterStateHydrated(function (Get $get, Set $set, $record) {
-                                        $latitude = $record->latitude;
-                                        $longitude = $record->longitude;
+                                        $latitude = $record?->latitude;
+                                        $longitude = $record?->longitude;
                 
                                         if ($latitude && $longitude) {
                                             $set('location', ['lat' => $latitude, 'lng' => $longitude]);
