@@ -21,7 +21,9 @@ class ScheduleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-calendar-days';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 7;
+
+    protected static ?string $navigationGroup = 'Attendance Management';
 
     public static function form(Form $form): Form
     {
