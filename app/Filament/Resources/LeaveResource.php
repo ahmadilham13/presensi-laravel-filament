@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class LeaveResource extends Resource
 {
@@ -23,26 +24,36 @@ class LeaveResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->required(),
-                Forms\Components\DatePicker::make('start_date')
-                    ->required(),
-                Forms\Components\DatePicker::make('end_date')
-                    ->required(),
-                Forms\Components\Textarea::make('reason')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\Textarea::make('note')
-                    ->columnSpanFull(),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\DatePicker::make('start_date')
+                            ->required(),
+                        Forms\Components\DatePicker::make('end_date')
+                            ->required(),
+                        Forms\Components\Textarea::make('reason')
+                            ->required()
+                            ->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('status'),
+                        Forms\Components\Textarea::make('note')
+                            ->columnSpanFull(),
+                    ])
+                    ->hidden(fn () : bool => !Auth::user()->hasRole('super_admin')),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $is_superadmin = Auth::user()->hasRole('super_admin');
+
+                if (!$is_superadmin) {
+                    $query->where('user_id', Auth::user()->id);
+                }
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
