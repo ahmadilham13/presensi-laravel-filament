@@ -68,10 +68,12 @@ class AttendanceResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal')
+                    ->searchable()
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pegawai')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('is_late')
                     ->label('Status')
@@ -82,7 +84,8 @@ class AttendanceResource extends Resource
                     ->color(fn (string $state): string => match ($state) {
                         'Tepat Waktu' => 'success',
                         'Terlambat' => 'danger',
-                    }),
+                    })
+                    ->description(fn (Attendance $record): string => 'Duration: ' . $record->workDuration()),
                 Tables\Columns\TextColumn::make('start_time')
                     ->label('Waktu Datang'),
                 Tables\Columns\TextColumn::make('end_time')
