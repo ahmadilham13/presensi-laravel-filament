@@ -28,7 +28,12 @@
                 <div>
                     <h2 class="text-2xl font-bold mb-2">Presensi</h2>
                     <div id="map" class="mb-4 rounded-lg border border-gray-300" wire:ignore></div>
-                    <form class="row g-3" wire:submit="store" enctype="multipart/form-data">
+                    @if (session()->has('error'))
+                        <div style="color: red; padding: 10px; border: 1px solid red; background-color: #fdd;">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                    <form class="row g-3 mt-3" wire:submit="store" enctype="multipart/form-data">
                         <button type="button" onclick="tagLocation()" class="px-4 py-2 bg-blue-500 text-white rounded">Tag Location</button>
                         @if ($insideRadius)
                             <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded">Submit Presensi</button>
