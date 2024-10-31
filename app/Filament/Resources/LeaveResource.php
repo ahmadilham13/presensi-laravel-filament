@@ -22,9 +22,8 @@ class LeaveResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make()
+        $schema = [
+            Forms\Components\Section::make('Detail')
                     ->schema([
                         Forms\Components\DatePicker::make('start_date')
                             ->required(),
@@ -33,15 +32,24 @@ class LeaveResource extends Resource
                         Forms\Components\Textarea::make('reason')
                             ->required()
                             ->columnSpanFull(),
-                    ]),
-                Forms\Components\Section::make()
+                    ])
+        ];
+
+        if (Auth::user()->hasRole('super_admin')) {
+            $schema[] = 
+            Forms\Components\Section::make('Detail')
                     ->schema([
-                        Forms\Components\TextInput::make('status'),
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'approved' => 'Approved',
+                                'rejected' => 'Rejected'
+                            ]),
                         Forms\Components\Textarea::make('note')
                             ->columnSpanFull(),
-                    ])
-                    ->hidden(fn () : bool => !Auth::user()->hasRole('super_admin')),
-            ]);
+                    ]);
+        }
+
+        return $form->schema($schema);
     }
 
     public static function table(Table $table): Table
@@ -64,7 +72,15 @@ class LeaveResource extends Resource
                 Tables\Columns\TextColumn::make('end_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'gray',
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                    })
+                    ->description(fn (Leave $record): string => $record->note ?? ''),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
